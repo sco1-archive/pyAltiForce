@@ -54,8 +54,10 @@ class AltiForce():
 
 
 if __name__ == "__main__":
-    Tk().withdraw()
+    root = Tk()
+    root.withdraw()
     filepath = askopenfilename()
+    root.destroy()
     
     if filepath:
         mydata = AltiForce(filepath)

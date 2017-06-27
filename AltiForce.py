@@ -1,7 +1,11 @@
+import matplotlib
+matplotlib.use("TkAgg")
+import matplotlib.pyplot as plt
+
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import numpy as np
-import matplotlib.pyplot as plt
+from numpy.lib import recfunctions as rfn
 
 class AltiForce():
     def __init__(self, filepath):
@@ -26,12 +30,15 @@ class AltiForce():
         alldata['accel_y'] /= 2048          # Convert to Gees
         alldata['accel_z'] /= 2048          # Convert to Gees
 
+        accel_total = np.sqrt(alldata['accel_x']**2 + alldata['accel_y']**2 + alldata['accel_z']**2)
+        alldata = rfn.append_fields(alldata, names='accel_total', data=accel_total, usemask=False)
+
         self.alldata = alldata
 
     def plotdata(self):
         x = self.alldata['vid_timestamp']
         y1 = self.alldata['altitude']
-        y2 = self.alldata['accel_z']
+        y2 = self.alldata['accel_total']
 
         fig, ax1 = plt.subplots()
 

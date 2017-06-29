@@ -1,2 +1,11 @@
 # Sample Data
 Test Data/*
+
+# IDE/Python Files
+__pycache__/*
+.vscode/*
+
+# Distribution
+build/*
+dist/*
+*.spec

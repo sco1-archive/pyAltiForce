@@ -10,9 +10,7 @@ from numpy.lib import recfunctions as rfn
 class AltiForce():
     def __init__(self, filepath):
         self.filepath = filepath
-        
         self.loadCSV()
-        self.plotdata()
         
     def loadCSV(self):
         colnames = ['vid_timestamp', 'abs_press', 'altitude', 'temp', 'accel_x', 'accel_y', 'accel_z',
@@ -61,3 +59,4 @@ if __name__ == "__main__":
     
     if filepath:
         mydata = AltiForce(filepath)
+        mydata.plotdata()

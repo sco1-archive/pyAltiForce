@@ -1,13 +1,14 @@
 import matplotlib
-matplotlib.use("TkAgg")
+matplotlib.use("TkAgg")  # Keep matplotlib and tkinter from conflicting and segfaulting
 import matplotlib.pyplot as plt
-
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import numpy as np
 from numpy.lib import recfunctions as rfn
+import argparse
+from pathlib import Path
 
-class AltiForce():
+class pyAltiForce():
     def __init__(self, filepath):
         self.filepath = filepath
         self.loadCSV()
@@ -44,6 +45,7 @@ class AltiForce():
         ax1.plot(x, y1, 'g-')
         ax2.plot(x, y2, 'b-')
 
+        fig.suptitle(self.filepath.name)
         ax1.set_xlabel('Time (seconds)')
         ax1.set_ylabel('Altitude (feet)', color='g')
         ax2.set_ylabel('Z Acceleration (Gees)', color='b')
@@ -52,11 +54,25 @@ class AltiForce():
 
 
 if __name__ == "__main__":
-    root = Tk()
-    root.withdraw()
-    filepath = askopenfilename()
-    root.destroy()
+    parser = argparse.ArgumentParser(description=('Parsing for AltiForce GoPro Backpack CSV, '
+                                                  'specify a file with the -f or --file flags '
+                                                  'or leave blank for a GUI prompt'
+                                                  )
+                                    )
+    parser.add_argument("-f", "--file", 
+                        help="Parse manually specified file (relative or absolute path)",
+                        action="store")
+    args = parser.parse_args()
+    if args.file:
+        filepath = Path(args.file)
+    else:
+        root = Tk()
+        root.withdraw()
+        filepath = Path(askopenfilename())
+        root.destroy()
     
-    if filepath:
-        mydata = AltiForce(filepath)
+    if filepath.exists():
+        mydata = pyAltiForce(filepath)
         mydata.plotdata()
+    else:
+        raise(ValueError)

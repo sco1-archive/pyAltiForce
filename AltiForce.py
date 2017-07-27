@@ -1,11 +1,12 @@
 import matplotlib
-matplotlib.use("TkAgg")
+matplotlib.use("TkAgg")  # Keep matplotlib and tkinter from conflicting and segfaulting
 import matplotlib.pyplot as plt
-
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import numpy as np
 from numpy.lib import recfunctions as rfn
+import argparse
+from pathlib import Path
 
 class AltiForce():
     def __init__(self, filepath):
@@ -52,11 +53,25 @@ class AltiForce():
 
 
 if __name__ == "__main__":
-    root = Tk()
-    root.withdraw()
-    filepath = askopenfilename()
-    root.destroy()
+    parser = argparse.ArgumentParser(description=('Parsing for AltiForce GoPro Backpack CSV, '
+                                                  'specify a file with the -f or --file flags '
+                                                  'or leave blank for a GUI prompt'
+                                                  )
+                                    )
+    parser.add_argument("-f", "--file", 
+                        help="Parse manually specified file (relative or absolute path)",
+                        action="store")
+    args = parser.parse_args()
+    if args.file:
+        filepath = Path(args.file)
+    else:
+        root = Tk()
+        root.withdraw()
+        filepath = Path(askopenfilename())
+        root.destroy()
     
-    if filepath:
+    if filepath.exists():
         mydata = AltiForce(filepath)
         mydata.plotdata()
+    else:
+        raise(ValueError)

@@ -8,7 +8,7 @@ from numpy.lib import recfunctions as rfn
 import argparse
 from pathlib import Path
 
-class AltiForce():
+class pyAltiForce():
     def __init__(self, filepath):
         self.filepath = filepath
         self.loadCSV()
@@ -45,6 +45,7 @@ class AltiForce():
         ax1.plot(x, y1, 'g-')
         ax2.plot(x, y2, 'b-')
 
+        fig.suptitle(self.filepath.name)
         ax1.set_xlabel('Time (seconds)')
         ax1.set_ylabel('Altitude (feet)', color='g')
         ax2.set_ylabel('Z Acceleration (Gees)', color='b')
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         root.destroy()
     
     if filepath.exists():
-        mydata = AltiForce(filepath)
+        mydata = pyAltiForce(filepath)
         mydata.plotdata()
     else:
         raise(ValueError)

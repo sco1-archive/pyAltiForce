@@ -15,6 +15,10 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Typing :: Typed",
 ]
+packages = [{include = "pyaltiforce"},]
+
+[tool.poetry.scripts]
+altiforce = "pyaltiforce.altiforce:cli"
 
 [tool.poetry.dependencies]
 python = "^3.8, <3.11"

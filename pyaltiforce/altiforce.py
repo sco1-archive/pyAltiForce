@@ -1,12 +1,12 @@
 import argparse
 from pathlib import Path
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.lib import recfunctions as rfn
+
+from pyaltiforce.helpers import prompt_for_file
 
 matplotlib.use("TkAgg")  # Keep matplotlib and tkinter from conflicting and segfaulting
 
@@ -37,7 +37,7 @@ class AltiForce:
             "total_sat",
             "gps_timestamp",
         ]
-        alldata = np.genfromtxt(self.filepath, delimiter=",", skip_header=11, names=colnames)
+        alldata = np.genfromtxt(self.filepath, delimiter=",", skip_header=11, names=colnames)  # type: ignore[no-untyped-call]  # noqa: E501
 
         # Convert data
         # Conversion factors are included in the header, starting manually for now
@@ -75,12 +75,11 @@ class AltiForce:
         plt.show()
 
 
-if __name__ == "__main__":
+def cli() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Parsing for AltiForce GoPro Backpack CSV, "
-            "specify a file with the -f or --file flags "
-            "or leave blank for a GUI prompt"
+            "Parsing for AltiForce GoPro Backpack CSV, specify a file with the -f or --file flags "
+            "or leave blank for a GUI prompt."
         )
     )
     parser.add_argument(
@@ -88,18 +87,19 @@ if __name__ == "__main__":
         "--file",
         help="Parse manually specified file (relative or absolute path)",
         action="store",
+        type=Path,
     )
+
     args = parser.parse_args()
-    if args.file:
-        filepath = Path(args.file)
-    else:
-        root = Tk()
-        root.withdraw()
-        filepath = Path(askopenfilename())
-        root.destroy()
+    if not args.file:
+        filepath = prompt_for_file(title="Please select AltiForce CSV for parsing.")
 
     if filepath.exists():
         mydata = AltiForce(filepath)
         mydata.plotdata()
     else:
-        raise (ValueError)
+        raise ValueError(f"Selected file does not exist: '{filepath}'")
+
+
+if __name__ == "__main__":
+    cli()
